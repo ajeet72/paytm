@@ -3,17 +3,18 @@ import { Button } from "./Button"
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { InputBox } from "./InputBox";
+import config from '../config';
+const { backendUrl } = config;
 
 
 export const Users = () => {
-    // Replace with backend call
     const token = localStorage.getItem("token")
     const username = localStorage.getItem("username")
     const [users, setUsers] = useState([]);
     const [filter, setFilter] = useState("");
 
     useEffect(() => {
-        axios.get("http://localhost:3000/api/v1/user/bulk?filter=" + filter, {
+        axios.get(`${backendUrl}/api/v1/user/bulk?filter=` + filter, {
             headers: {
                 Authorization: `Bearer ${token}` 
             }
@@ -22,7 +23,27 @@ export const Users = () => {
                 const filteredUsers = response.data.user.filter(users => users.username != username)
                 setUsers(filteredUsers);
             })
+    }, [])
+
+    useEffect(() => {
+        const setTime = setTimeout(() => {
+            axios.get(`${backendUrl}/api/v1/user/bulk?filter=` + filter, {
+                headers: {
+                    Authorization: `Bearer ${token}` 
+                }
+            })
+                .then((response) => {
+                    const filteredUsers = response.data.user.filter(users => users.username != username)
+                    setUsers(filteredUsers);
+                })
+        }, 300)
+
+        return () => {
+            clearTimeout(setTime)
+        }
     }, [filter])
+
+    
     return <>
         <div className="font-bold mt-6 text-lg">
             Users

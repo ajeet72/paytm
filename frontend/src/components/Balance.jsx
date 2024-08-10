@@ -1,12 +1,14 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import config from '../config';
+const { backendUrl } = config;
 
 export const Balance = () => {
     const [balance, setBalance] = useState(null);
     const token = localStorage.getItem("token");
 
     useEffect(() => {
-        axios.get("http://localhost:3000/api/v1/account/balance", {
+        axios.get(`${backendUrl}/api/v1/account/balance`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
